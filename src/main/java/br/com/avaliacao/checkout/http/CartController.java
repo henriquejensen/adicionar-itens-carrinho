@@ -6,6 +6,7 @@ import br.com.avaliacao.checkout.model.Cart;
 import br.com.avaliacao.checkout.model.CartItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -15,9 +16,10 @@ public class CartController {
     @Autowired
     private CartDBInMemory cartDB;
 
-    @RequestMapping(value = "/adicionar")
+    @RequestMapping(value = "/adicionar", method = RequestMethod.POST)
     public void addToCart(String cartId, Integer q, String codeProduct, String nameProduct, String brand, Double price) {
-        Produto p = new Produto();
+         	
+    	Produto p = new Produto();
         p.setCodigo(codeProduct);
         p.setNome(nameProduct);
         p.setMarca(brand);
