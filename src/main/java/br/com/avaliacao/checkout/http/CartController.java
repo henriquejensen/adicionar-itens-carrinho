@@ -21,13 +21,10 @@ public class CartController {
 
     @Autowired
     private CartDBInMemory cartDB;
-    
-    private Cart cart;
 
     @RequestMapping(value = "/adicionar", method = RequestMethod.POST)
     public Cart addToCart(@RequestBody AddCart add) {
-		findCart(add);
-    	
+    	   	
     	Produto p = new Produto();
         p.setCodigo(add.getCodeProduct());
         p.setNome(add.getNameProduct());
@@ -37,6 +34,8 @@ public class CartController {
         CartItem item = new CartItem();
         item.setProduto(p);
         item.setQuantity(add.getQ());
+        
+        Cart cart = cartDB.findOne(add.getCartId());
 
         if (cart == null) {
             cart = new Cart();
@@ -60,20 +59,6 @@ public class CartController {
     public Cart listCart(@PathVariable String id) {
     	return cartDB.findOne(id);
     }
-
-	private void findCart(AddCart add) {
-    	
-	   	String cartId = add.getCartId();
-	    	
-	   	if (!cartId.isEmpty()) {
-	   		cart = cartDB.findOne(cartId);    		
-	   	}
-	    	
-	   	if (cart == null) {
-			cart = new Cart();
-			cart.setCartId(UUID.randomUUID().toString());			
-		}
-	}
 
 }
 

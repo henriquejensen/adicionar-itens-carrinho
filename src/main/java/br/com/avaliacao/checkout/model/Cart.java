@@ -64,13 +64,12 @@ public class Cart {
 	}
 
 	public boolean containItem(CartItem item) {
-		System.out.println(item);
 		
 		for (CartItem cartItem : getItems()) {
-			System.out.println(cartItem);
+			if(item.getProduto().getCodigo().equals(cartItem.getProduto().getCodigo()))
+					return true;
 		}
-		
-    	return getItems().contains(item);
+		return false;
 	}
 
 }
