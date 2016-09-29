@@ -59,4 +59,18 @@ public class Cart {
         return total;
     }
 
+	public void addItem(CartItem item) {
+		items.add(item);		
+	}
+
+	public boolean containItem(CartItem item) {
+		System.out.println(item);
+		
+		for (CartItem cartItem : getItems()) {
+			System.out.println(cartItem);
+		}
+		
+    	return getItems().contains(item);
+	}
+
 }

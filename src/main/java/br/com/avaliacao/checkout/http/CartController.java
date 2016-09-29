@@ -5,6 +5,9 @@ import br.com.avaliacao.checkout.model.Produto;
 import br.com.avaliacao.checkout.model.AddCart;
 import br.com.avaliacao.checkout.model.Cart;
 import br.com.avaliacao.checkout.model.CartItem;
+
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,10 +21,13 @@ public class CartController {
 
     @Autowired
     private CartDBInMemory cartDB;
+    
+    private Cart cart;
 
     @RequestMapping(value = "/adicionar", method = RequestMethod.POST)
-    public void addToCart(@RequestBody AddCart add) {
-    		        	
+    public Cart addToCart(@RequestBody AddCart add) {
+		findCart(add);
+    	
     	Produto p = new Produto();
         p.setCodigo(add.getCodeProduct());
         p.setNome(add.getNameProduct());
@@ -32,15 +38,22 @@ public class CartController {
         item.setProduto(p);
         item.setQuantity(add.getQ());
 
-        Cart cart = cartDB.findOne(add.getCartId());
-
         if (cart == null) {
             cart = new Cart();
             cart.setCartId(add.getCartId());
-        } //ATENCAO: caso o carrinho ja exista, o fluxo atende?
+        }
 
-        cart.getItems().add(item);
+        if (cart.containItem(item)) {    		
+    		CartItem cartItem = cart.getItems().stream().filter(c -> c.equals(item)).findFirst().orElse(null);
+    		cartItem.incrementQuantity(item.getQuantity());    		
+		
+    	}else{
+    		cart.getItems().add(item);    	    		
+    	}
+        
         cartDB.save(cart);
+        
+        return cart;
     }
     
     @RequestMapping("/{id}")
@@ -48,6 +61,19 @@ public class CartController {
     	return cartDB.findOne(id);
     }
 
+	private void findCart(AddCart add) {
+    	
+	   	String cartId = add.getCartId();
+	    	
+	   	if (!cartId.isEmpty()) {
+	   		cart = cartDB.findOne(cartId);    		
+	   	}
+	    	
+	   	if (cart == null) {
+			cart = new Cart();
+			cart.setCartId(UUID.randomUUID().toString());			
+		}
+	}
 
 }
 
